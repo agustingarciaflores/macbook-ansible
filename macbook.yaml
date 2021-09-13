@@ -59,6 +59,7 @@
         - path: ~/.kube/configs
         - path: ~/Library/Application Support/Code
         - path: ~/Library/Application Support/Code/User/
+        - path: ~/Library/KeyBindings
 
     - name: get_url | Get Neo layout files
       get_url:
@@ -105,6 +106,10 @@
             src: vscode/settings.json,
             dest: "~/Library/Application Support/Code/User/settings.json",
             mode: "0660",
+          }
+        - {
+            src: DefaultKeyBinding.dict,
+            dest: "~/Library/KeyBindings/DefaultKeyBinding.dict",
           }
 
     - name: shell | Get plain files
