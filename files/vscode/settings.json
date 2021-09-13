@@ -1,0 +1,16 @@
+{
+  "files.autoSave": "afterDelay",
+  "files.autoSaveDelay": 500,
+  "files.insertFinalNewline": true,
+  "editor.tabSize": 2,
+  "editor.detectIndentation": false,
+  "terminal.integrated.scrollback": 100000,
+  "explorer.confirmDragAndDrop": false,
+  "explorer.confirmDelete": false,
+  "terminal.integrated.fontFamily": "MesloLGS NF",
+  "files.trimTrailingWhitespace": true,
+  "workbench.tree.indent": 16,
+  "[python]": {
+    "editor.tabSize": 4
+  }
+}

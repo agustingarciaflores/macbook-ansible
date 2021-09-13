@@ -1,0 +1,151 @@
+- name: Set up MacBook
+  connection: local
+  hosts: localhost
+  tasks:
+    - name: set_fact | set user name
+      set_fact:
+        user: "{{ lookup('env', 'USER') }}"
+
+    - name: homebrew_cask | Upgrade casks
+      community.general.homebrew_cask:
+        update_homebrew: yes
+        upgrade_all: yes
+
+    - name: homebrew_cask | Install casks
+      community.general.homebrew_cask:
+        name:
+          - karabiner-elements
+          - copyq
+          - visual-studio-code
+          - thunderbird
+          - rectangle
+          - gas-mask
+          - iterm2
+          - lastpass
+          - keepassxc
+          - libreoffice
+
+    - name: homebrew | Install
+      community.general.homebrew:
+        name:
+          - ghq
+          - tmux
+          - helm
+          - kustomize
+          - terraform
+          - kubectx
+          - helmfile
+          - krew
+          - diff-so-fancy
+          - kubectl
+          - mtr
+          - htop
+          - iperf3
+          - docker
+          - docker-compose
+          - pwgen
+          - ansible
+          - httpie
+          - jq
+          - pre-commit
+
+    - name: file | Create needed directories
+      file:
+        path: "{{ item.path }}"
+        state: directory
+      loop:
+        - path: ~/repos
+        - path: ~/.kube
+        - path: ~/.kube/configs
+        - path: ~/Library/Application Support/Code
+        - path: ~/Library/Application Support/Code/User/
+
+    - name: get_url | Get Neo layout files
+      get_url:
+        url: "{{ item }}"
+        dest: "~/Library/Keyboard Layouts"
+      loop:
+        - https://dl.neo-layout.org/neo.keylayout
+        - https://dl.neo-layout.org/neo.icns
+
+    - name: shell | Install oh-my-zsh
+      shell: sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+      args:
+        creates: "~/.oh-my-zsh"
+
+    - name: git | Install git repo tools
+      git:
+        repo: "{{ item.repo }}"
+        dest: "{{ item.dest }}"
+        depth: "{{ item.depth|d(1) }}"
+        force: "{{ item.force|d('yes') }}"
+      loop:
+        - repo: https://github.com/romkatv/powerlevel10k.git
+          dest: ~/.oh-my-zsh/custom/themes/powerlevel10k
+
+    - name: copy | Copy files
+      copy:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        owner: "{{ item.owner|d(user) }}"
+        group: "{{ item.group|d('staff') }}"
+        mode: "{{ item.mode|d('0440') }}"
+      loop:
+        - { src: dotfiles/gitconfig, dest: "~/.gitconfig" }
+        - { src: dotfiles/gitignore, dest: "~/.gitignore" }
+        - { src: dotfiles/zshrc, dest: "~/.zshrc" }
+        - { src: dotfiles/tmux.conf, dest: "~/.tmux.conf" }
+        - { src: dotfiles/p10k.zsh, dest: "~/.p10k.zsh" }
+        - {
+            src: vscode/keybindings.json,
+            dest: "~/Library/Application Support/Code/User/keybindings.json",
+            mode: "0660",
+          }
+        - {
+            src: vscode/settings.json,
+            dest: "~/Library/Application Support/Code/User/settings.json",
+            mode: "0660",
+          }
+
+    - name: shell | Get plain files
+      shell: "curl -Lo {{ item.target }} {{ item.url }} && chmod {{ item.chmod|d('0755') }} {{ item.target }}"
+      args:
+        creates: "{{ item.target }}"
+      loop:
+        - {
+            target: "~/.kubectl_aliases",
+            chmod: "0444",
+            # https://github.com/ahmetb/kubectl-aliases/blob/4440d32d636dc9aade0c5cbbf627e003f04cf939/.kubectl_aliases
+            url: https://raw.githubusercontent.com/ahmetb/kubectl-aliases/4440d32d636dc9aade0c5cbbf627e003f04cf939/.kubectl_aliases,
+          }
+
+    - name: shell | Add krew repos
+      shell: "kubectl krew index add {{ item.name }} {{ item.url }}"
+      args:
+        creates: "~/.krew/index/{{ item.name }}"
+      loop:
+        - { name: kvaps, url: https://github.com/kvaps/krew-index }
+
+    - name: shell | Install kubectl plugins
+      shell: "kubectl krew install {{ item.receipt }}"
+      args:
+        creates: "~/.krew/receipts/{{ item.name }}.yaml"
+      loop:
+        - { name: node-shell, receipt: kvaps/node-shell }
+        - { name: get-all, receipt: get-all }
+
+    - name: shell | Install helm plugins
+      shell: "helm plugin install {{ item.url }}{% if item.version|d(False) %} --version {{ item.version }}{% endif %}"
+      args:
+        creates: "~/.local/share/helm/plugins/{{ item.name }}"
+      loop:
+        - {
+            name: helm-diff,
+            url: https://github.com/databus23/helm-diff,
+            version: v3.1.3,
+          }
+        - {
+            name: helm-git,
+            url: https://github.com/aslafy-z/helm-git,
+            version: 0.10.0,
+          }

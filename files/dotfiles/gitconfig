@@ -1,0 +1,60 @@
+[alias]
+  f = commit --all --fixup HEAD
+  ca = commit --all
+  cam = commit -am
+  cm = commit -m
+  came = commit --amend
+  camea = commit --amend --all
+  camean = commit --all --amend --no-edit
+  co = checkout
+  p = pull
+  pu = push
+  pus = push -o ci.skip
+  puf = push -f
+  pufs = push -f -o ci.skip
+  rb = rebase
+  rbc = rebase --continue
+  s = status
+  sh = show
+
+[push]
+  default = simple
+  recurseSubmodules = on-demand
+
+[pull]
+  rebase = true
+
+[fetch]
+  prune = true
+
+[rebase]
+  autosquash = true
+  autoStash = true
+
+[ghq]
+  root = ~/repos
+
+[user]
+  name = Maurice Meyer  
+  email = mmeyer@anaconda.com
+
+[core]
+  pager = diff-so-fancy | less --tabs=4 -RFX
+  excludesfile = ~/.gitignore
+
+[color]
+  ui = true
+
+[color "diff-highlight"]
+  oldNormal = red bold
+  oldHighlight = red bold 52
+  newNormal = green bold
+  newHighlight = green bold 22
+
+[color "diff"]
+  meta = 11
+  frag = magenta bold
+  commit = yellow bold
+  old = red bold
+  new = green bold
+  whitespace = red reverse
