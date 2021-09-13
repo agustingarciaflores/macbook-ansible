@@ -61,7 +61,7 @@ brew install ansible
 ansible-playbook macbook.yaml
 ```
 
-After that
+After the initial deployment
 
 1. Restart iterm and run `p10k configure`
 2. Answer with „Yes“ once asked if you want to install the Meslo LGS Nerd Font and quit iterm once the installation is complete
