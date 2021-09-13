@@ -125,6 +125,7 @@
         creates: "~/.krew/index/{{ item.name }}"
       loop:
         - { name: kvaps, url: https://github.com/kvaps/krew-index }
+        - { name: default, url: https://github.com/kubernetes-sigs/krew-index }
 
     - name: shell | Install kubectl plugins
       shell: "kubectl krew install {{ item.receipt }}"
