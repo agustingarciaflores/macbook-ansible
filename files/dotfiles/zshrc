@@ -179,3 +179,6 @@ complete -F __start_kubectl k
 
 ## ~/.kubectl_aliases print command before executing it
 # function kubectl() { echo "+ kubectl $@">&2; command kubectl $@; }
+
+bindkey "^[^[[C" forward-word
+bindkey "^[^[[D" backward-word
