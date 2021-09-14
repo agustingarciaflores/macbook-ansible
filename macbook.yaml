@@ -48,6 +48,9 @@
           - httpie
           - jq
           - pre-commit
+          - k9s
+          - awscli
+          - tflint
 
     - name: file | Create needed directories
       file:
@@ -155,3 +158,9 @@
             url: https://github.com/aslafy-z/helm-git,
             version: 0.10.0,
           }
+
+    - name: pip | Install python packages
+      pip:
+        executable: /usr/local/opt/python3/bin/pip3
+        name:
+          - aws2-wrap
