@@ -164,3 +164,14 @@
         executable: /usr/local/opt/python3/bin/pip3
         name:
           - aws2-wrap
+
+    - name: file | Create missing symlinks
+      become: yes
+      file:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        state: link
+      loop:
+        - { src: /usr/local/Cellar/mtr/0.94/sbin/mtr, dest: /usr/local/bin/mtr }
+        - { src: /usr/local/Cellar/mtr/0.94/sbin/mtr-packet, dest: /usr/local/bin/mtr-packet }
+

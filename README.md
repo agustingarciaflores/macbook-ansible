@@ -42,7 +42,7 @@ pre-commit install --hook-type commit-msg --hook-type pre-commit
 To run the playbook, use:
 
 ```sh
-ansible-playbook macbook.yaml
+ansible-playbook macbook.yaml --ask-become-pass
 ```
 
 For a first run on a new MacBook, use:
@@ -58,7 +58,7 @@ curl -fsSL -o install-brew.sh https://raw.githubusercontent.com/Homebrew/install
 brew install ansible
 
 # Run the playbook
-ansible-playbook macbook.yaml
+ansible-playbook macbook.yaml --ask-become-pass
 ```
 
 After the initial deployment
