@@ -1,17 +1,44 @@
 - name: Set up MacBook
   connection: local
   hosts: localhost
-  tasks:
-    - name: set_fact | set user name
-      set_fact:
-        user: "{{ lookup('env', 'USER') }}"
+  pre_tasks:
+    - name: command | Get user account name
+      command: id -un
+      changed_when: false
+      register: command__user
 
+    - name: command | Get user full name
+      command: id -F
+      changed_when: false
+      register: command__user_fullname
+
+    - name: set_fact | Set username facts
+      set_fact:
+        user: "{{ command__user.stdout }}"
+        user_fullname: "{{ command__user_fullname.stdout }}"
+
+  tasks:
     - name: homebrew_cask | Upgrade casks
+      tags:
+        - packages
       community.general.homebrew_cask:
         update_homebrew: yes
         upgrade_all: yes
 
-    - name: homebrew_cask | Install casks
+    - name: homebrew_cask | Install base casks
+      tags:
+        - packages
+      community.general.homebrew_cask:
+        name:
+          - gas-mask
+          - iterm2
+          - lastpass
+          - libreoffice
+
+    - name: homebrew_cask | Install opinionated casks
+      tags:
+        - packages
+        - opinionated
       community.general.homebrew_cask:
         name:
           - karabiner-elements
@@ -19,13 +46,11 @@
           - visual-studio-code
           - thunderbird
           - rectangle
-          - gas-mask
-          - iterm2
-          - lastpass
           - keepassxc
-          - libreoffice
 
-    - name: homebrew | Install
+    - name: homebrew | Install packages
+      tags:
+        - packages
       community.general.homebrew:
         name:
           - ghq
@@ -51,20 +76,32 @@
           - k9s
           - awscli
           - tflint
+          - tcpdump
+          - wireshark
 
     - name: file | Create needed directories
       file:
         path: "{{ item.path }}"
         state: directory
       loop:
-        - path: ~/repos
         - path: ~/.kube
         - path: ~/.kube/configs
+
+    - name: file | Create opinionated directories
+      tags:
+        - opinionated
+      file:
+        path: "{{ item.path }}"
+        state: directory
+      loop:
+        - path: ~/repos
         - path: ~/Library/Application Support/Code
         - path: ~/Library/Application Support/Code/User/
         - path: ~/Library/KeyBindings
 
     - name: get_url | Get Neo layout files
+      tags:
+        - opinionated
       get_url:
         url: "{{ item }}"
         dest: "~/Library/Keyboard Layouts"
@@ -73,11 +110,15 @@
         - https://dl.neo-layout.org/neo.icns
 
     - name: shell | Install oh-my-zsh
+      tags:
+        - opinionated
       shell: sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
       args:
         creates: "~/.oh-my-zsh"
 
     - name: git | Install git repo tools
+      tags:
+        - opinionated
       git:
         repo: "{{ item.repo }}"
         dest: "{{ item.dest }}"
@@ -88,6 +129,8 @@
           dest: ~/.oh-my-zsh/custom/themes/powerlevel10k
 
     - name: copy | Copy files
+      tags:
+        - opinionated
       copy:
         src: "{{ item.src }}"
         dest: "{{ item.dest }}"
@@ -95,7 +138,6 @@
         group: "{{ item.group|d('staff') }}"
         mode: "{{ item.mode|d('0440') }}"
       loop:
-        - { src: dotfiles/gitconfig, dest: "~/.gitconfig" }
         - { src: dotfiles/gitignore, dest: "~/.gitignore" }
         - { src: dotfiles/zshrc, dest: "~/.zshrc" }
         - { src: dotfiles/tmux.conf, dest: "~/.tmux.conf" }
@@ -115,7 +157,21 @@
             dest: "~/Library/KeyBindings/DefaultKeyBinding.dict",
           }
 
+    - name: template | Template files
+      tags:
+        - opinionated
+      template:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        owner: "{{ item.owner|d(user) }}"
+        group: "{{ item.group|d('staff') }}"
+        mode: "{{ item.mode|d('0440') }}"
+      loop:
+        - { src: dotfiles/gitconfig, dest: "~/.gitconfig" }
+
     - name: shell | Get plain files
+      tags:
+        - opinionated
       shell: "curl -Lo {{ item.target }} {{ item.url }} && chmod {{ item.chmod|d('0755') }} {{ item.target }}"
       args:
         creates: "{{ item.target }}"

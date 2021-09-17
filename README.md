@@ -1,6 +1,10 @@
 # macbook
 
-The ansible playbook in this repository sets up my MacBook with all tools I need.
+The ansible playbook in this repository sets up my MacBook I use to work with [Anaconda](https://anaconda.com) with all tools I need.
+
+The setup this playbook provides is opinionated as its targeted at my usage patterns and workflows with e.g. Neo2 Keyboard layout, VS Code as IDE, keepassxc as password manager.
+
+Check [the „Deployment“ section](##Deployment) for instructions on how to only install the basic toolset.
 
 ## Tools and configurations
 
@@ -24,6 +28,9 @@ I use [ghq](https://github.com/x-motemen/ghq) to simplify the organization of gi
 
 It also sets up [pre-commit](https://pre-commit.com/) which I use to e.g. enforce code and commit style.
 
+The git config assumes that your username is `[first letter of first name][last name]` and sets `[username]@anaconda.com` as git user email.
+It also sets your full name as the git user name.
+
 ### Miscellaneous
 
 Please check the `homebrew_cask | Install casks` and `homebrew | Install` for various little helpers that are installed with this playbook (e.g. `iperf3`, `mtr`).
@@ -39,11 +46,27 @@ pre-commit install --hook-type commit-msg --hook-type pre-commit
 
 ## Deployment
 
-To run the playbook, use:
+If you want to only install the basic toolset, always add
+
+```sh
+--skip-tags opinionated
+```
+
+### General
+
+To run the playbook, use
 
 ```sh
 ansible-playbook macbook.yaml --ask-become-pass
 ```
+
+If you only want to update and install packages with homebrew, you can use
+
+```sh
+ansible-playbook macbook.yaml --tags packages
+```
+
+### First run
 
 For a first run on a new MacBook, use:
 
