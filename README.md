@@ -52,20 +52,6 @@ If you want to only install the basic toolset, always add
 --skip-tags opinionated
 ```
 
-### General
-
-To run the playbook, use
-
-```sh
-ansible-playbook macbook.yaml --ask-become-pass
-```
-
-If you only want to update and install packages with homebrew, you can use
-
-```sh
-ansible-playbook macbook.yaml --tags packages
-```
-
 ### First run
 
 For a first run on a new MacBook, use:
@@ -89,3 +75,17 @@ After the initial deployment
 1. Restart iterm and run `p10k configure`
 2. Answer with „Yes“ once asked if you want to install the Meslo LGS Nerd Font and quit iterm once the installation is complete
 3. If opened: Restart Visual Studio Code to fix the terminal font
+
+### Subsequent runs
+
+To run the playbook, use
+
+```sh
+ansible-playbook macbook.yaml --ask-become-pass
+```
+
+If you only want to update and install packages with homebrew, you can use
+
+```sh
+ansible-playbook macbook.yaml --tags packages
+```
