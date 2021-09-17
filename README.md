@@ -4,7 +4,7 @@ The ansible playbook in this repository sets up my MacBook I use to work with [A
 
 The setup this playbook provides is opinionated as its targeted at my usage patterns and workflows with e.g. Neo2 Keyboard layout, VS Code as IDE, keepassxc as password manager.
 
-Check [the „Deployment“ section](##Deployment) for instructions on how to only install the basic toolset.
+Check [the „Deployment“ section](#Deployment) for instructions on how to only install the basic toolset.
 
 ## Tools and configurations
 
