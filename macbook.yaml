@@ -59,6 +59,7 @@
           - kustomize
           - terraform
           - kubectx
+          - k9s
           - helmfile
           - krew
           - diff-so-fancy
