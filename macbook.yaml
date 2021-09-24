@@ -73,8 +73,8 @@
           - ansible
           - httpie
           - jq
+          - yq
           - pre-commit
-          - k9s
           - awscli
           - tflint
           - tcpdump
